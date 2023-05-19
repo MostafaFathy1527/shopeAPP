@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return  GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       initialBinding: Binding(),
       title: 'Flutter Demo',
       home: Scaffold(
