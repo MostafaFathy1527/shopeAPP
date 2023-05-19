@@ -244,6 +244,7 @@ class HomeView extends StatelessWidget {
               label: ""
           ),
         ],
+
         currentIndex: controller.navigatorValue,
         onTap: (index)=>controller.changeSelectedValue(index),
         elevation: 0,
