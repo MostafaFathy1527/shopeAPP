@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:shope/constance.dart';
+import 'package:shope/core/view_model/control_view_model.dart';
 import 'package:shope/core/view_model/home_view_model.dart';
 import 'package:shope/view/widget/custom_text.dart';
 
@@ -21,45 +22,41 @@ class HomeView extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body:  SingleChildScrollView(
-        child: StreamBuilder<Object>(
-          stream: null,
-          builder: (context, snapshot) {
-            return Container(
-              padding: EdgeInsets.only(top:100 , left:20, right:20),
-              child: Column(
-                children: [
-                  _searchTextFormField(),
+    return  GetBuilder<HomeViewModel>(
+      builder:(controller)=> Scaffold(
+        body:  SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(top:100 , left:20, right:20),
+            child: Column(
+              children: [
+                _searchTextFormField(),
 
 
-                  SizedBox(height: 50,),
-                  _listViewCategory(),
-                  SizedBox(height: 30,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        text: "Best Selling",
-                        fontSize: 18,
-                      ),
-                      CustomText(
-                        text: "See all",
-                        fontSize: 16,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30,),
-                  _listViewProducts(),
-                ],
-              ),
-            );
-          }
+                SizedBox(height: 50,),
+                _listViewCategory(),
+                SizedBox(height: 30,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      text: "Best Selling",
+                      fontSize: 18,
+                    ),
+                    CustomText(
+                      text: "See all",
+                      fontSize: 16,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30,),
+                _listViewProducts(),
+              ],
+            ),
+          ),
         ),
+
+
       ),
-      bottomNavigationBar: bottomNavigationBar(),
-
-
     );
   }
  Widget _listViewCategory(){
@@ -190,8 +187,8 @@ class HomeView extends StatelessWidget {
   }
 
  Widget bottomNavigationBar() {
-    return GetBuilder<HomeViewModel>(
-      init: HomeViewModel(),
+    return GetBuilder<ControlViewModel>(
+      init: ControlViewModel(),
       builder: (controller) =>
        BottomNavigationBar(
         items: [
