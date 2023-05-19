@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shope/view/auth/login_screen.dart';
+import 'package:shope/view/controlview.dart';
 
 import 'helper/dinding.dart';
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
       initialBinding: Binding(),
       title: 'Flutter Demo',
       home: Scaffold(
-        body: LoginScreen(),
+        body: ControlView(),
     ),
     );
   }

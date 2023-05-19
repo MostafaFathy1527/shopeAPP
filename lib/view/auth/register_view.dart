@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:shope/view/auth/login_screen.dart';
-
 import '../../constance.dart';
 import '../../core/view_model/auth_view_model.dart';
 import '../widget/custom_text.dart';
 import '../widget/custom_text_form_field.dart';
 
 class RegisterView extends GetWidget<AuthViewModel> {
+  final AuthViewModel _authViewModel = Get.find<AuthViewModel>();
+  final TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -27,7 +28,8 @@ class RegisterView extends GetWidget<AuthViewModel> {
             child: Icon(
               Icons.arrow_back,
               color: Colors.black,
-            )),
+            )
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(
@@ -47,8 +49,16 @@ class RegisterView extends GetWidget<AuthViewModel> {
                 height: 30,
               ),
               CustomTextFormField(
-                onSaved: (value){},
-                validator: (value){},
+
+                  onSaved: (value) {
+                    print(value);
+                    _authViewModel.name = value;
+                  },
+                validator: (value){
+                  if(value!.isEmpty){
+                    return "Please Enter your name";
+                  }
+                },
                 labelText: "Name",
                 hintText: "Enter your Name",
                 labelColor: Colors.grey,
@@ -59,10 +69,18 @@ class RegisterView extends GetWidget<AuthViewModel> {
                 height: 30,
               ),
               CustomTextFormField(
-                onSaved: (value){},
-                validator: (value){},
-                labelText: "Email",
-                hintText: "Enter your email",
+                onSaved: (value) {
+                  print(value);
+                  _authViewModel.email = value;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
+                labelText: 'Email',
+                hintText: 'Enter your email',
                 labelColor: Colors.grey,
                 hintColor: primaryColor,
                 borderColor: primaryColor,
@@ -71,10 +89,19 @@ class RegisterView extends GetWidget<AuthViewModel> {
                 height: 40,
               ),
               CustomTextFormField(
-                onSaved: (value){},
-                validator: (value){},
-                labelText: "Password",
-                hintText: "Enter your password",
+                obscureText: true,
+                onSaved: (value) {
+                  print(value);
+                  _authViewModel.password = value;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+                labelText: 'Password',
+                hintText: 'Enter your password',
                 labelColor: Colors.grey,
                 hintColor: primaryColor,
                 borderColor: primaryColor,
@@ -96,8 +123,12 @@ class RegisterView extends GetWidget<AuthViewModel> {
                 ),
                 child: TextButton(
                   onPressed: (){
-                    controller.googleSignInMethod();
-                  },
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      print(_authViewModel.email);
+                      _authViewModel.createAccountWithEmailAndPassword();
+                    }
+                    },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:[

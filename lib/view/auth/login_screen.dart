@@ -9,7 +9,7 @@ import '../../core/view_model/auth_view_model.dart';
 
 
 class LoginScreen extends GetWidget<AuthViewModel> {
-  const LoginScreen({Key? key}) : super(key:  key);
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class LoginScreen extends GetWidget<AuthViewModel> {
           left: 20,
         ),
         child: Form(
-          // key: _formKey,
+          key: _formKey,
           child: Column(
             children: [
               Row(
@@ -59,27 +59,47 @@ class LoginScreen extends GetWidget<AuthViewModel> {
               SizedBox(
                 height: 20,
               ),
+
               CustomTextFormField(
-                onSaved: (value){},
-                validator: (value){},
+                onSaved: (value) {
+                  controller.email = value!;
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return "Please enter your email";
+                  }
+                  return null;
+                },
                 labelText: "Email",
                 hintText: "Enter your email",
                 labelColor: Colors.grey,
                 hintColor: primaryColor,
                 borderColor: primaryColor,
               ),
+
               SizedBox(
                 height: 15,
               ),
+
               CustomTextFormField(
-                onSaved: (value){},
-                validator: (value){},
+                obscureText: true,
+                onSaved: (value) {
+                  controller.password = value!;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please enter your email";
+                  }
+                  return null;
+                },
+
                 labelText: "Password",
-                hintText: "Enter your password",
+                hintText: '**********',
                 labelColor: Colors.grey,
                 hintColor: primaryColor,
                 borderColor: primaryColor,
               ),
+
               SizedBox(
                 height: 10,
               ),
@@ -93,12 +113,27 @@ class LoginScreen extends GetWidget<AuthViewModel> {
               ),
           TextButton(
             onPressed: (){
+              _formKey.currentState!.save();
+              if(_formKey.currentState!.validate()){
+                controller.signInWithEmailAndPassword();
+              }
             },
             child: CustomText(
               text: "SIGN IN",
               fontSize: 18.0,
               color: Colors.white,
               alignment: Alignment.center,
+            ),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(primaryColor),
+              padding: MaterialStateProperty.all(
+                EdgeInsets.symmetric(horizontal: 140, vertical: 12),
+              ),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
             ),
           ),
 
