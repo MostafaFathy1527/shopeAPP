@@ -8,6 +8,7 @@ import 'package:shope/constance.dart';
 import 'package:shope/core/view_model/control_view_model.dart';
 import 'package:shope/core/view_model/home_view_model.dart';
 import 'package:shope/view/cart_view.dart';
+import 'package:shope/view/deatilas_view.dart';
 import 'package:shope/view/widget/custom_text.dart';
 
 import '../core/view_model/auth_view_model.dart';
@@ -24,6 +25,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  GetBuilder<HomeViewModel>(
+    init: HomeViewModel(),
       builder:(controller)=>controller.loading.value? Center(child: CircularProgressIndicator()) :
       Scaffold(
         body:  SingleChildScrollView(
@@ -63,10 +65,10 @@ class HomeView extends StatelessWidget {
   }
 
 
- Widget _listViewCategory(){
+  Widget _listViewCategory(){
 
-   return  GetBuilder<HomeViewModel>(
-     builder:(controller)=> Column(
+    return  GetBuilder<HomeViewModel>(
+      builder:(controller)=> Column(
         children: [
           CustomText(
             text:"Categories" ,
@@ -99,8 +101,8 @@ class HomeView extends StatelessWidget {
                             height: 50,
                           ),
 
-                          ),
                         ),
+                      ),
 
                       SizedBox(height: 20,),
                       CustomText(
@@ -118,7 +120,7 @@ class HomeView extends StatelessWidget {
           ),
         ],
       ),
-   );
+    );
   }
   Widget _searchTextFormField() {
     return Container(
@@ -138,64 +140,72 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
+
   Widget _listViewProducts() {
-    return Container(
-      height: 350,
-      child: ListView.separated(
-        itemCount: names.length,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context , index){
-          return Container(
-            width: MediaQuery.of(context).size.width * .4,
-            child: Column(
-                children:[
-                  Container(
-                    width: MediaQuery.of(context).size.width * .4,
-                    decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.grey.shade100,
-                ) ,
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child:
-                  Image.asset(
-                    "assets/images/watch.png",
-                   fit: BoxFit.fill,
-                   height:   220,
-                  ),
+    return GetBuilder<HomeViewModel>(
+      builder:(controller)=>Container(
+        height: 350,
+        child: ListView.separated(
+          itemCount: controller.productModel.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context , index){
+            return GestureDetector(
+              onTap: (){
+                Get.to(DeatilasView(model: controller.productModel[index],));
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width * .4,
+                child: Column(
+                    children:[
+                      Container(
 
+                        width: MediaQuery.of(context).size.width * .4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey.shade100,
+                        ) ,
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child:
+                          Image.network(controller.categoryModel[index].image,
+                            fit: BoxFit.fill,
+                            height:   220,
+                          ),
+
+                        ),
+                      ),
+                      SizedBox(height: 20,),
+
+                      CustomText(
+
+                        text: controller.productModel[index].name,
+                        alignment: Alignment.bottomCenter,
+                      ),
+                      CustomText(
+                        text: controller.productModel[index].descritption,
+                        alignment: Alignment.bottomLeft,
+                        color: Colors.grey,
+                      ),
+                      CustomText(
+                        text: controller.productModel[index].price.toString() ,
+                        alignment: Alignment.bottomLeft,
+                        color: primaryColor,
+                      ),
+
+                    ]
                 ),
+
               ),
-                  SizedBox(height: 20,),
+            );
 
-                  CustomText(
+          },
+          separatorBuilder: ( context, index)=>SizedBox(
+            width: 20,
+          ) ,
 
-                text: "dsadasdasdwatch",
-                alignment: Alignment.bottomCenter,
-              ),
-              CustomText(
-                text: "watch",
-                alignment: Alignment.bottomLeft,
-                color: Colors.grey,
-              ),
-              CustomText(
-                text: "10\$",
-                alignment: Alignment.bottomLeft,
-                color: primaryColor,
-              ),
-
-              ]
-            ),
-
-          );
-
-        },
-        separatorBuilder: ( context, index)=>SizedBox(
-        width: 20,
-      ) ,
+        ),
 
       ),
-
     );
 
   }
@@ -278,4 +288,3 @@ class HomeView extends StatelessWidget {
   }
 
 }
-

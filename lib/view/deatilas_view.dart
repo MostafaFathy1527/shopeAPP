@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shope/model/productmodel.dart';
 import 'package:shope/view/widget/custom_text.dart';
 
 import '../constance.dart';
-import '../model/productmodel.dart';
 
-class DetailsView extends StatelessWidget {
+class DeatilasView extends StatelessWidget {
   ProductModel model;
-
-  DetailsView({required this.model});
+  DeatilasView({required this.model});
+  @override
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class DetailsView extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.grey),
                                     borderRadius: BorderRadius.circular(20),
-                                    color: model.color,
+                                    color: ( model.color == 'red')? Colors.red:Colors.blue,
                                   ),
                                 )
                               ],
@@ -103,7 +103,7 @@ class DetailsView extends StatelessWidget {
                         height: 20,
                       ),
                       CustomText(
-                        text: model.description,
+                        text: model.descritption,
                         fontSize: 18,
                         height: 2.5,
                       )
@@ -132,22 +132,23 @@ class DetailsView extends StatelessWidget {
                     ],
                   ),
                   Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      color: primaryColor,
+                    ),
+
                     padding: EdgeInsets.all(20),
                     width: 180,
                     height: 100,
-                    child: TextButton(
-                       onPressed: () {  },
-                       child: CustomText(
-                        text: 'ADD',
-                        fontSize: 22,
-                        color: Colors.white,
+                    child: Center(
+                      child: Text(
+                        "ADD",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                        ),
+                        ),
                     ),
-                  ),
-decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: primaryColor,
-                  ),
-
                   ),
                 ],
               ),

@@ -15,7 +15,7 @@ import 'auth/login_screen.dart';
 import 'cart_view.dart';
 
 class ControlView extends GetWidget<AuthViewModel> {
-  Widget currentScreen = HomeView();
+  Widget currentScreen = CartView();
   @override
   Widget build(BuildContext context) {
     return Obx(() {
