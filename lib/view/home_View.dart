@@ -7,6 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:shope/constance.dart';
 import 'package:shope/core/view_model/control_view_model.dart';
 import 'package:shope/core/view_model/home_view_model.dart';
+import 'package:shope/view/cart_view.dart';
 import 'package:shope/view/widget/custom_text.dart';
 
 import '../core/view_model/auth_view_model.dart';
@@ -23,7 +24,8 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  GetBuilder<HomeViewModel>(
-      builder:(controller)=> Scaffold(
+      builder:(controller)=>controller.loading.value? Center(child: CircularProgressIndicator()) :
+      Scaffold(
         body:  SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(top:100 , left:20, right:20),
@@ -59,58 +61,64 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
+
+
  Widget _listViewCategory(){
 
-   return  Column(
-      children: [
-        CustomText(
-          text:"Categories" ,
-          fontSize: 24,
-        ),
-
-
-        SizedBox(height: 30,),
-
-
-        Container(
-          height: 100,
-          child: ListView.separated(
-            itemCount: names.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context , index){
-              return Container(
-                width: MediaQuery.of(context).size.width * .25,
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.grey.shade200,
-                      ) ,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Image.asset("assets/images/google.png" ,
-                          width: 40,
-                          height:   40,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    CustomText(
-                      text: names[index],
-                      alignment: Alignment.bottomCenter,
-                    )
-                  ],
-                ),
-              );
-
-            }, separatorBuilder: ( context, index)=>SizedBox(
-            width: 20,
-          ) ,
+   return  GetBuilder<HomeViewModel>(
+     builder:(controller)=> Column(
+        children: [
+          CustomText(
+            text:"Categories" ,
+            fontSize: 24,
           ),
-        ),
-      ],
-    );
+
+
+          SizedBox(height: 30,),
+
+
+          Container(
+            height: 100,
+            child: ListView.separated(
+              itemCount: controller.categoryModel.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context , index){
+                return Container(
+                  width: MediaQuery.of(context).size.width * .25,
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.grey.shade200,
+                        ) ,
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Image.network(controller.categoryModel[index].image
+                            , width: 50,
+                            height: 50,
+                          ),
+
+                          ),
+                        ),
+
+                      SizedBox(height: 20,),
+                      CustomText(
+                        text: controller.categoryModel[index].name,
+                        alignment: Alignment.bottomCenter,
+                      )
+                    ],
+                  ),
+                );
+
+              }, separatorBuilder: ( context, index)=>SizedBox(
+              width: 20,
+            ) ,
+            ),
+          ),
+        ],
+      ),
+   );
   }
   Widget _searchTextFormField() {
     return Container(
@@ -175,80 +183,99 @@ class HomeView extends StatelessWidget {
                 alignment: Alignment.bottomLeft,
                 color: primaryColor,
               ),
+
               ]
             ),
+
           );
 
-        }, separatorBuilder: ( context, index)=>SizedBox(
+        },
+        separatorBuilder: ( context, index)=>SizedBox(
         width: 20,
       ) ,
+
       ),
+
     );
+
   }
 
- Widget bottomNavigationBar() {
+
+
+
+
+
+
+
+
+  Widget bottomNavigationBar() {
     return GetBuilder<ControlViewModel>(
       init: ControlViewModel(),
       builder: (controller) =>
-       BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            activeIcon: Padding(
-              padding: const EdgeInsets.only(top:20.0),
-              child: Text("Explore",
-                style: TextStyle(
-                  color: primaryColor,
-                ),
-              ),
-            ),
-
-
-            icon: Padding(
-              padding: const EdgeInsets.only(top:15.0),
-              child: Icon(Icons.home,
-              ),
-            ),
-            label: "",
-          ),
-          BottomNavigationBarItem(
-              activeIcon: Padding(
-                padding: const EdgeInsets.only(top:20.0),
-                child: Text("profile",
-                  style: TextStyle(
-                    color: primaryColor,
+          BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                activeIcon: Padding(
+                  padding: const EdgeInsets.only(top:20.0),
+                  child: Text("Explore",
+                    style: TextStyle(
+                      color: primaryColor,
+                    ),
                   ),
                 ),
-              ),
-              icon: Padding(
-                padding: const EdgeInsets.only(top:15.0),
-                child: Icon(Icons.person),
-              ),
-              label: ""
-          ),
-          BottomNavigationBarItem(
-              activeIcon: Padding(
-                padding: const EdgeInsets.only(top:20.0),
-                child: Text("cart",
-                  style: TextStyle(
-                    color: primaryColor,
+
+
+                icon: Padding(
+                  padding: const EdgeInsets.only(top:15.0),
+                  child: Icon(Icons.home,
                   ),
                 ),
+                label: "",
               ),
-              icon: Padding(
-                padding: const EdgeInsets.only(top:15.0),
-                child: Icon(Icons.shopping_cart),
+              BottomNavigationBarItem(
+                  activeIcon: Padding(
+                    padding: const EdgeInsets.only(top:20.0),
+                    child: Text("profile",
+                      style: TextStyle(
+                        color: primaryColor,
+                      ),
+                    ),
+                  ),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(top:15.0),
+                    child: Icon(Icons.person),
+                  ),
+                  label: ""
               ),
-              label: ""
-          ),
-        ],
+              BottomNavigationBarItem(
+                  activeIcon: Padding(
+                    padding: const EdgeInsets.only(top:20.0),
+                    child: Text("cart",
+                      style: TextStyle(
+                        color: primaryColor,
+                      ),
+                    ),
+                  ),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(top:15.0),
+                    child: Icon(Icons.shopping_cart),
+                  ),
+                  label: ""
+              ),
+            ],
 
-        currentIndex: controller.navigatorValue,
-        onTap: (index)=>controller.changeSelectedValue(index),
-        elevation: 0,
-        backgroundColor: Colors.grey.shade50,
-        selectedItemColor: primaryColor,
-       ),
-      );
+            currentIndex: controller.navigatorValue,
+            onTap:(index){
+              if(index==1){
+                Get.to(CartView());
+              }
+            },
+            elevation: 0,
+            backgroundColor: Colors.grey.shade50,
+            selectedItemColor: primaryColor,
+          ),
+    );
   }
+
 }
 

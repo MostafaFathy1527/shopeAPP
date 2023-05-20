@@ -1,7 +1,5 @@
 
 import 'package:get/get.dart';
-import 'package:shope/view/controlview.dart';
-
 import '../core/view_model/auth_view_model.dart';
 import '../core/view_model/control_view_model.dart';
 import '../core/view_model/home_view_model.dart';
