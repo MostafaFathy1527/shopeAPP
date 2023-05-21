@@ -6,11 +6,13 @@ import 'package:shope/core/services/home_service.dart';
 
 import '../../model/category_model.dart';
 import '../../model/productmodel.dart';
+import 'control_view_model.dart';
 HomeViewModel homeViewModel = HomeViewModel();
 
 class HomeViewModel extends GetxController{
   ValueNotifier<bool>  get loading => _loading;
   ValueNotifier<bool> _loading = ValueNotifier(false);
+
   List <CategoryModel> get categoryModel => _categoryModel;
   List <CategoryModel> _categoryModel = [];
 
@@ -18,13 +20,17 @@ class HomeViewModel extends GetxController{
   List <ProductModel> _productModel = [];
 
 
+
+
 HomeViewModel(){
   getCategory();
   getBestSelling();
 }
+
 @override
 void onInit(){
   super.onInit();
+  init: ControlViewModel();
 }
   @override
   void onClose(){

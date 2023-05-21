@@ -19,6 +19,7 @@ class ControlViewModel extends GetxController {
   get navigatorValue => _navigatorValue;
 
   Widget currentScreen = HomeView();
+
   @override
   void onClose(){
     super.onClose();

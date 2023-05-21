@@ -6,6 +6,7 @@ import 'package:shope/view/widget/custom_text.dart';
 import 'package:shope/view/widget/custom_text_form_field.dart';
 import '../../constance.dart';
 import '../../core/view_model/auth_view_model.dart';
+import '../../core/view_model/control_view_model.dart';
 
 
 class LoginScreen extends GetWidget<AuthViewModel> {
@@ -13,6 +14,7 @@ class LoginScreen extends GetWidget<AuthViewModel> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -21,7 +23,6 @@ class LoginScreen extends GetWidget<AuthViewModel> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(
-          top: 50,
           right: 20,
           left: 20,
         ),
@@ -181,14 +182,25 @@ class LoginScreen extends GetWidget<AuthViewModel> {
                         color: primaryColor,
                         alignment: Alignment.center,
                       ),
+                      _loadbottom(),
+
                     ],
                   ),
                 ),
               ),
-            ],
+          ],
+
           ),
         ),
+
       ),
+
+    );
+  }
+  Widget _loadbottom(){
+    return GetBuilder<ControlViewModel>(
+        init: ControlViewModel(),
+    builder: (controller) => Text(""),
     );
   }
 }

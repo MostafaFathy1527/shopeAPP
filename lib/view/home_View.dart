@@ -22,22 +22,27 @@ class HomeView extends StatelessWidget {
     '1',
     '1',
   ];
+
   @override
   Widget build(BuildContext context) {
     return  GetBuilder<HomeViewModel>(
     init: HomeViewModel(),
-      builder:(controller)=>controller.loading.value? Center(child: CircularProgressIndicator()) :
+
+        builder:(controller)=>controller.loading.value? Center(child: CircularProgressIndicator()) :
       Scaffold(
         body:  SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(top:100 , left:20, right:20),
             child: Column(
               children: [
+
                 _searchTextFormField(),
 
 
                 SizedBox(height: 50,),
+
                 _listViewCategory(),
+
                 SizedBox(height: 30,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,7 +73,9 @@ class HomeView extends StatelessWidget {
   Widget _listViewCategory(){
 
     return  GetBuilder<HomeViewModel>(
+      init: HomeViewModel(),
       builder:(controller)=> Column(
+
         children: [
           CustomText(
             text:"Categories" ,
@@ -78,31 +85,18 @@ class HomeView extends StatelessWidget {
 
           SizedBox(height: 30,),
 
-
           Container(
             height: 100,
             child: ListView.separated(
+
               itemCount: controller.categoryModel.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context , index){
+
                 return Container(
                   width: MediaQuery.of(context).size.width * .25,
                   child: Column(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.grey.shade200,
-                        ) ,
-                        child: Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: Image.network(controller.categoryModel[index].image
-                            , width: 50,
-                            height: 50,
-                          ),
-
-                        ),
-                      ),
 
                       SizedBox(height: 20,),
                       CustomText(
@@ -128,6 +122,7 @@ class HomeView extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         color: Colors.grey.shade100,
       ),
+
       child: TextFormField(
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -141,10 +136,11 @@ class HomeView extends StatelessWidget {
     );
   }
 
+
   Widget _listViewProducts() {
     return GetBuilder<HomeViewModel>(
       builder:(controller)=>Container(
-        height: 350,
+        height: 500,
         child: ListView.separated(
           itemCount: controller.productModel.length,
           scrollDirection: Axis.horizontal,
@@ -153,6 +149,7 @@ class HomeView extends StatelessWidget {
               onTap: (){
                 Get.to(DeatilasView(model: controller.productModel[index],));
               },
+
               child: Container(
                 width: MediaQuery.of(context).size.width * .4,
                 child: Column(
@@ -167,11 +164,10 @@ class HomeView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(6.0),
                           child:
-                          Image.network(controller.categoryModel[index].image,
+                          Image.network(controller.productModel[index].image,
                             fit: BoxFit.fill,
                             height:   220,
                           ),
-
                         ),
                       ),
                       SizedBox(height: 20,),
@@ -181,10 +177,11 @@ class HomeView extends StatelessWidget {
                         text: controller.productModel[index].name,
                         alignment: Alignment.bottomCenter,
                       ),
-                      CustomText(
+                        CustomText(
                         text: controller.productModel[index].descritption,
                         alignment: Alignment.bottomLeft,
                         color: Colors.grey,
+
                       ),
                       CustomText(
                         text: controller.productModel[index].price.toString() ,
