@@ -1,10 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shope/view/auth/login_screen.dart';
 import 'package:shope/view/controlview.dart';
 
+import 'core/view_model/control_view_model.dart';
+import 'core/view_model/home_view_model.dart';
 import 'helper/dinding.dart';
 
 void main() async {
@@ -24,10 +28,14 @@ void main() async {
     );
   else
     await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final controlViewModel = Get.put(ControlViewModel());
+  final homeViewModel = Get.put(HomeViewModel()); // Update this line
+  final CartViewModel = Get.put(HomeViewModel()); // Update this line
+
+   MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
 

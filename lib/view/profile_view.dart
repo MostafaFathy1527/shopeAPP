@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../constance.dart';
 import '../core/view_model/auth_view_model.dart';
+import '../core/view_model/control_view_model.dart';
 
 class ProfileView extends StatelessWidget {
 
   AuthViewModel authViewModel = Get.find();
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      // Trigger hot reload after the first frame is displayed
+      hotReload();
+    });
 
     var name = authViewModel.user;
 
@@ -30,7 +36,7 @@ SizedBox(
           ),
           SizedBox(width: 20),
           Text(
-            name!,
+            name?? 'User Name',
             style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold
@@ -92,7 +98,79 @@ SizedBox(
           )
         ],
       ),
+      bottomNavigationBar: bottomNavigationBar(),
     );
   }
+  Widget bottomNavigationBar() {
+    return GetBuilder<ControlViewModel>(
+      init: ControlViewModel(), // Initialize the ControlViewModel
+      builder: (controller) => BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                "Explore",
+                style: TextStyle(
+                  color: primaryColor,
+                ),
+              ),
+            ),
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Icon(Icons.home),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                "Profile",
+                style: TextStyle(
+                  color: primaryColor,
+                ),
+              ),
+            ),
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Icon(Icons.person),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                "Cart",
+                style: TextStyle(
+                  color: primaryColor,
+                ),
+              ),
+            ),
+            icon: Padding(
+
+
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Icon(Icons.shopping_cart),
+            ),
+            label: "",
+          ),
+        ],
+        currentIndex: controller.navigatorValue,
+        onTap: (index) {
+          controller.changeSelectedValue(index);
+        },
+        elevation: 0,
+        selectedItemColor: Colors.black,
+        backgroundColor: Colors.grey.shade50,
+      ),
+    );
+  }
+
+  void hotReload() {
+    Get.find<ControlViewModel>().update();
+  }
+
 }
 

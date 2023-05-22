@@ -26,8 +26,7 @@ class ControlView extends GetWidget<AuthViewModel> {
           ? LoginScreen()
           : GetBuilder<ControlViewModel>(
         builder:(controller)=> Scaffold(
-          body: controller.currentScreen,
-          bottomNavigationBar: bottomNavigationBar(),
+          body: controller.currentScreen
         ),
       );
     });

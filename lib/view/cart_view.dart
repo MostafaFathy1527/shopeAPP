@@ -1,31 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:shope/constance.dart';
+import 'package:shope/core/view_model/cart_viewmodel.dart';
 import 'package:shope/view/widget/custom_text.dart';
 
-class CartView extends StatelessWidget {
+import '../core/view_model/control_view_model.dart';
 
-  List<String> names = <String>[
-    'item1',
-    'item2',
-    'item3',
-    'item4',
-    'item5',
-  ];
-  List<String> images = <String>[
-    'assets/images/google.png',
-    'assets/images/google.png',
-    'assets/images/google.png',
-    'assets/images/google.png',
-    'assets/images/google.png',
-  ];
-  List<String> prices = <String>[
-    '\$1',
-    '\$1',
-    '\$1',
-    '\$1',
-    '\$1',
-  ];
+class CartView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -37,71 +19,75 @@ class CartView extends StatelessWidget {
             height: 50,
           ),
           Expanded(
-            child: Container(
-              child: ListView.separated(
-                itemBuilder: (context, index) {
-                  return Container(
+            child: GetBuilder<CartViewModel>(
+              init: CartViewModel(),
+              builder:(controller)=> Container(
+                child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    return Container(
 
-                    height: 140,
-                    child: Row(
-                      children: [
-                        Image.asset(images[index],
-                          fit: BoxFit.fill,
-                          width: 70,
-                          height: 70,
-                        ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          text: names[index],
-                          fontSize: 24,
-                        ),
-                        SizedBox(height: 10,),
-                        CustomText(
-                          text: '\$${prices[index]}',
-                        ),
-                        SizedBox(height: 30,),
-                        Container(
-                          width: 140,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.grey.shade200,
+                      height: 140,
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            controller.cartProductModelList[index].image,
+                            fit: BoxFit.fill,
+                            width: 70,
+                            height: 70,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(Icons.add),
-                              SizedBox(height: 30,),
-                              CustomText(
-                                text: '1',
-                                alignment: Alignment.center,
-                              ),
-                              SizedBox(height: 30,),
-                              //the icon is not centered
-                              Container(
-                                alignment:Alignment.topCenter,
-                                  child: Icon(Icons.minimize)),
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            text: controller.cartProductModelList[index].name,
+                            fontSize: 24,
+                          ),
+                          SizedBox(height: 10,),
+                          CustomText(
+                            text: '\$${controller.cartProductModelList[index].price[index]}',
+                          ),
+                          SizedBox(height: 30,),
+                          Container(
+                            width: 140,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey.shade200,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(Icons.add),
+                                SizedBox(height: 30,),
+                                CustomText(
+                                  text: '1',
+                                  alignment: Alignment.center,
+                                ),
+                                SizedBox(height: 30,),
+                                //the icon is not centered
+                                Container(
+                                  alignment:Alignment.topCenter,
+                                    child: Icon(Icons.minimize)),
+                              ],
 
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  ],
-                  ),
-                  );
-                },
-                itemCount: names.length, separatorBuilder: (BuildContext context, int index) { return SizedBox(height: 40,);
+                    ],
+                    ),
+                    );
+                  },
+                  itemCount: controller.cartProductModelList.length, separatorBuilder: (BuildContext context, int index) { return SizedBox(height: 40,);
 
     },
-            ),
+              ),
 
     ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 20.0,right: 20),
@@ -144,6 +130,74 @@ class CartView extends StatelessWidget {
         ],
 
       ),
+      bottomNavigationBar: bottomNavigationBar(),
     );
   }
+  Widget bottomNavigationBar() {
+    return GetBuilder<ControlViewModel>(
+      init: ControlViewModel(), // Initialize the ControlViewModel
+      builder: (controller) => BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                "Explore",
+                style: TextStyle(
+                  color: primaryColor,
+                ),
+              ),
+            ),
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Icon(Icons.home),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                "Profile",
+                style: TextStyle(
+                  color: primaryColor,
+                ),
+              ),
+            ),
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Icon(Icons.person),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                "Cart",
+                style: TextStyle(
+                  color: primaryColor,
+                ),
+              ),
+            ),
+            icon: Padding(
+
+
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Icon(Icons.shopping_cart),
+            ),
+            label: "",
+          ),
+        ],
+        currentIndex: controller.navigatorValue,
+        onTap: (index) {
+          controller.changeSelectedValue(index);
+        },
+        elevation: 0,
+        selectedItemColor: Colors.black,
+        backgroundColor: Colors.grey.shade50,
+      ),
+    );
+  }
+
 }

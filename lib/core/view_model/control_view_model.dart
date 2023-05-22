@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../model/category_model.dart';
 import '../../model/productmodel.dart';
@@ -25,25 +26,18 @@ class ControlViewModel extends GetxController {
     super.onClose();
     print('Control deleted from memory');
   }
-  void changeSelectedValue(int selectedValue) {
-    _navigatorValue = selectedValue;
-    switch (selectedValue) {
-      case 0:
-        {
-          currentScreen = HomeView();
-          break;
-        }
-      case 1:
-        {
-          currentScreen = ProfileView();
-          break;
-        }
-      case 2:
-        {
-          currentScreen = CartView();
-          break;
-        }
+  void changeSelectedValue(int index) {
+    // Update the selected value or perform necessary actions based on the index
+    // For example, you can update the value using an Rx variable
+    _navigatorValue = index;
+
+    // Or navigate to a different screen based on the index
+    if (index == 0) {
+      Get.to(HomeView());
+    } else if (index == 1) {
+      Get.to(ProfileView());
     }
-    update();
-  }
-}
+    else if (index == 2) {
+      Get.to(CartView());
+    }
+  }}

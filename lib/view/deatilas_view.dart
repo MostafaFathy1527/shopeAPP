@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shope/core/view_model/cart_viewmodel.dart';
+import 'package:shope/model/cart_product_model.dart';
 import 'package:shope/model/productmodel.dart';
 import 'package:shope/view/widget/custom_text.dart';
+import 'package:sqflite/sqflite.dart';
+
 
 import '../constance.dart';
 
@@ -131,23 +136,35 @@ class DeatilasView extends StatelessWidget {
                       )
                     ],
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      color: primaryColor,
-                    ),
+                  GetBuilder<CartViewModel>(
+                    init: CartViewModel(),
+                    builder:(controller)=> TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: EdgeInsets.all(40),
 
-                    padding: EdgeInsets.all(20),
-                    width: 180,
-                    height: 100,
-                    child: Center(
-                      child: Text(
-                        "ADD",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
                         ),
+
+                     onPressed: () {
+                       controller.addProduct(
+                           cartProductModel(
+                               name: model.name,
+                               image: model.image,
+                               quantity: 1,
+                               price: model.price,
+                           )
+                           );
+                       },
+                     child: Center(
+                       child: CustomText(
+                         text: 'ADD',
+                         fontSize: 22,
+                         color: Colors.white,
                         ),
+                     ),
                     ),
                   ),
                 ],

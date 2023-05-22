@@ -11,67 +11,81 @@ import '../../service/firestore_user.dart';
 import '../../view/home_View.dart';
 
 class AuthViewModel extends GetxController {
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  String? email;
+  String? password;
+  String? name;
 
-  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-  FirebaseAuth _auth = FirebaseAuth.instance;
-
-   String? email;
-   String? password;
-   String? name;
-
-  Rxn<User> _user = Rxn<User>();
-
+  Rx<User?> _user = Rx<User?>(null);
 
   String? get user => _user.value?.email;
 
-
   @override
   void onInit() {
-
-    // TODO: implement onInit
     super.onInit();
     _user.bindStream(_auth.authStateChanges());
-    _loadbottom();
-  }
-
-  @override
-  void onReady() {
-    // TODO: implement onReady
-    super.onReady();
+    _loadBottom();
   }
 
   @override
   void onClose() {
-    // TODO: implement onClose
     super.onClose();
-    _loadbottom();
-
+    _loadBottom();
   }
 
-  void googleSignInMethod() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    print(googleUser);
-    GoogleSignInAuthentication googleSignInAuthentication =
-    await googleUser!.authentication;
+  void signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+      await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+      await googleSignInAccount!.authentication;
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+        idToken: googleSignInAuthentication.idToken,
+        accessToken: googleSignInAuthentication.accessToken,
+      );
 
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      idToken: googleSignInAuthentication.idToken,
-      accessToken: googleSignInAuthentication.accessToken,
+      // Sign in to Firebase with the Google credential.
+      final UserCredential userCredential =
+      await _auth.signInWithCredential(authCredential);
 
-    );
+      // Get the user's email address.
+      final String? email = userCredential.user!.email;
 
-    await _auth.signInWithCredential(credential).then((user) {
+      // Set the name to be the same as the email address.
+      final User? user = _auth.currentUser;
+      final displayName = email?.split('@')[0]; // Extract the username part of the email.
 
+      // Update the user's display name.
+      await user!.updateDisplayName(displayName);
 
       Get.offAll(() => HomeView());
-      _loadbottom();
-    });
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error login account',
+        e.toString(),
+        colorText: Colors.black,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void _loadBottom() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? _seen = prefs.getBool('seen') ?? false;
+
+    if (_seen) {
+      Get.offAll(() => HomeView());
+    } else {
+      await prefs.setBool('seen', true);
+      Get.offAll(() => LoginScreen());
+    }
   }
 
   void signInWithEmailAndPassword() async {
     if (email == null || password == null) {
-      // Handle nullability
       Get.snackbar(
         'Error login account',
         'Please enter email and password',
@@ -82,7 +96,6 @@ class AuthViewModel extends GetxController {
     }
 
     if (email!.isEmpty || password!.isEmpty) {
-      // Check if both email and password are empty
       Get.snackbar(
         'Error login account',
         'Please enter email and password',
@@ -93,9 +106,11 @@ class AuthViewModel extends GetxController {
     }
 
     try {
-      await _auth.signInWithEmailAndPassword(email: email!, password: password!);
-      Get.offAll(() => HomeView()
+      await _auth.signInWithEmailAndPassword(
+        email: email!,
+        password: password!,
       );
+      Get.offAll(() => HomeView());
     } catch (e) {
       print(e.toString());
       Get.snackbar(
@@ -108,14 +123,16 @@ class AuthViewModel extends GetxController {
   }
 
   Future<User?> createAccountWithEmailAndPassword() async {
-    print('email: $email, password: $password');
     if (email == null || password == null) {
       throw Exception('Email or password is null');
     }
 
     try {
       final UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email!, password: password!);
+          .createUserWithEmailAndPassword(
+        email: email!,
+        password: password!,
+      );
       await saveUser(userCredential);
       Get.offAll(() => HomeView());
       return userCredential.user;
@@ -130,15 +147,13 @@ class AuthViewModel extends GetxController {
     }
   }
 
-
-  // Sign out method
   void signOut() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.clear();
       await _googleSignIn.signOut();
       await _auth.signOut();
-      Get.offAll(() => LoginScreen());
+      Get.to(() => LoginScreen(), preventDuplicates: true);
     } catch (e) {
       print(e);
     }
@@ -151,11 +166,5 @@ class AuthViewModel extends GetxController {
       name: name == null ? user.user?.displayName : name,
       pic: '',
     ));
-  }
-  Widget _loadbottom(){
-    return GetBuilder<ControlViewModel>(
-      init: ControlViewModel(),
-      builder: (controller) => Text(""),
-    );
   }
 }

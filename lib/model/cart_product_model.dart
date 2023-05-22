@@ -2,30 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:shope/helper/extenstion.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ProductModel {
+class cartProductModel {
   String name;
   String image;
-  String descritption;
-  String color;
-  String size;
   String price;
+  int quantity;
 
-  ProductModel({
+  cartProductModel({
     required this.name,
     required this.image,
-    required this.descritption,
-    required this.color,
-    required this.size,
+    required this.quantity,
     required this.price,
   });
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
-    return ProductModel(
+  factory cartProductModel.fromJson(Map<String, dynamic> json) {
+    return cartProductModel(
       name: json['name']?? '',
       image: json['image']?? '',
-      descritption: json['descritption']?? '',
-      color: json['color']?? '',
-      size: json['size']?? '',
+      quantity: json['quantity']?? '',
       price: json['price']?? '',
     );
   }
@@ -34,9 +28,7 @@ class ProductModel {
     return {
       'name': name,
       'image': image,
-      'description': descritption,
-      'color': color,
-      'size': size,
+      'quantity': quantity,
       'price': price,
     };
   }
