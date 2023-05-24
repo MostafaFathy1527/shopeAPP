@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:shope/core/view_model/cart_viewmodel.dart';
 import 'package:shope/view/auth/login_screen.dart';
 import 'package:shope/view/controlview.dart';
-
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'core/view_model/control_view_model.dart';
 import 'core/view_model/home_view_model.dart';
 import 'helper/dinding.dart';
 
 void main() async {
+  await Hive.initFlutter();
 
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb)
@@ -33,7 +36,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final controlViewModel = Get.put(ControlViewModel());
   final homeViewModel = Get.put(HomeViewModel()); // Update this line
-  final CartViewModel = Get.put(HomeViewModel()); // Update this line
+  final CartViewModel cartViewModel = Get.put(CartViewModel()); // Update this line
 
    MyApp({Key? key}) : super(key: key);
   @override

@@ -150,11 +150,12 @@ class DeatilasView extends StatelessWidget {
 
                      onPressed: () {
                        controller.addProduct(
-                           cartProductModel(
+                           CartProductModel(
                                name: model.name,
                                image: model.image,
                                quantity: 1,
-                               price: model.price,
+                               price:model.price,
+                                productid: model.productid,
                            )
                            );
                        },

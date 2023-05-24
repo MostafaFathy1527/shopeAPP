@@ -3,6 +3,7 @@ import 'package:shope/helper/extenstion.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ProductModel {
+  String productid;
   String name;
   String image;
   String descritption;
@@ -17,9 +18,10 @@ class ProductModel {
     required this.color,
     required this.size,
     required this.price,
+    required this.productid,
   });
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
+  factory ProductModel.fromJson(Map<dynamic, dynamic> json) {
     return ProductModel(
       name: json['name']?? '',
       image: json['image']?? '',
@@ -27,10 +29,11 @@ class ProductModel {
       color: json['color']?? '',
       size: json['size']?? '',
       price: json['price']?? '',
+      productid: json['productid']?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<dynamic, dynamic> toJson() {
     return {
       'name': name,
       'image': image,
@@ -38,6 +41,7 @@ class ProductModel {
       'color': color,
       'size': size,
       'price': price,
+      'productid': productid,
     };
   }
 }
