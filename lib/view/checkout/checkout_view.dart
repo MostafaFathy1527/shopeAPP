@@ -2,183 +2,276 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shope/model/cart_product_model.dart';
 import 'package:shope/view/controlview.dart';
+import 'package:shope/view/widget/CustomText2.dart';
 import 'package:shope/view/widget/custom_text.dart';
 
 import '../../constance.dart';
 import '../../core/view_model/cart_viewmodel.dart';
+import '../../model/checkout_viewmodel.dart';
+import '../widget/CustomButton.dart';
+import '../widget/custom_textFormField2.dart';
 
-class CheckoutView extends StatefulWidget {
-  final List<CartProductModel> cartProducts;
-
-  CheckoutView({required this.cartProducts});
-
-  @override
-  _CheckoutViewState createState() => _CheckoutViewState();
-}
-
-class _CheckoutViewState extends State<CheckoutView> {
-  String selectedPaymentMethod = '';
-
-  TextEditingController shippingAddressController = TextEditingController();
-
-  @override
-  void dispose() {
-    shippingAddressController.dispose();
-    super.dispose();
-  }
+class CheckoutView extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Checkout'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(
-                text: 'Shipping Address',
-                fontSize: 18,
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: shippingAddressController,
-                decoration: InputDecoration(
-                  hintText: 'Address',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 20),
-              CustomText(
-                text: 'Payment Method',
-                fontSize: 18,
-              ),
-              SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: paymentMethods.length,
-                itemBuilder: (context, index) {
-                  final paymentMethod = paymentMethods[index];
-                  return RadioListTile(
-                    title: Text(paymentMethod),
-                    value: paymentMethod,
-                    groupValue: selectedPaymentMethod,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedPaymentMethod = value.toString();
-                      });
-                    },
-                  );
-                },
-              ),
-              SizedBox(height: 20),
-              CustomText(
-                text: 'Order Summary',
-                fontSize: 18,
-              ),
-              SizedBox(height: 10),
-              ListView.separated(
-                shrinkWrap: true,
-                itemCount: widget.cartProducts.length,
-                itemBuilder: (context, index) {
-                  final product = widget.cartProducts[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomText(
-                          text: product.name,
-                          fontSize: 16,
-                        ),
-                        Row(
-                          children: [
-                            CustomText(
-                              text: 'x${product.quantity.toString()}',
-                              fontSize: 16,
-                            ),
-                            SizedBox(width: 10),
-                            CustomText(
-                              text: '\$${product.price}',
-                              fontSize: 16,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) => Divider(),
-              ),
-              SizedBox(height: 10),
-              Row(
+      body: Column(
+        children: [
+          Container(
+            height: 130,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 24, left: 16, right: 16),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  CustomText(
-                    text: 'Total',
-                    fontSize: 18,
-                  ),
-                  GetBuilder<CartViewModel>(
-                    init: Get.find(),
-                    builder: (controller) => CustomText(
-                      text: '\$ ${controller.totalPrice}',
-                      fontSize: 18,
-                      color: primaryColor,
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.black,
                     ),
+                  ),
+                  CustomText(
+                    text: 'Checkout',
+                    fontSize: 20,
+                    alignment: Alignment.bottomCenter,
+                  ),
+                  Container(
+                    width: 24,
                   ),
                 ],
               ),
-              SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // Place order logic
-                    String address = shippingAddressController.text;
-                    if (address.isNotEmpty) {
-
-                      Get.snackbar(
-
-                        'Order Placed', 'Your order has been placed successfully.'
-                          '\nThank you for shopping with us.'
-                          '\nYour order will be delivered to $address.',
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.green,
-                        colorText: Colors.white,
-                        duration: Duration(seconds: 7),
-                      );
-
-                      // Clear the cart
-                      await Get.find<CartViewModel>().clearCart();
-                      Get.find<CartViewModel>().isCartEmpty = true;
-                      // Save the cart items to local storage
-                      await Get.find<CartViewModel>().saveCartItems();
-
-                      // Navigate to home screen
-                      Get.offAll(ControlView());
-
-                    } else {
-                      Get.snackbar('Error', 'Please enter a shipping address.');
-                    }
-                  },
-                  child: Text('Place Order'),
-                ),
-
-              ),
-            ],
+            ),
           ),
-        ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(right: 16, left: 16, bottom: 24),
+                child: Form(
+                  key: _formKey,
+                  child: GetBuilder<CheckoutViewModel>(
+                    init: Get.find<CheckoutViewModel>(),
+                    builder: (controller) => Column(
+                      children: [
+                        ListViewProducts(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomTextFormField2(
+                          title: 'Street',
+                          hintText: '518 asafra',
+                          validatorFn: (value) {
+                            if (value!.isEmpty || value.length < 4)
+                              return 'Please enter valid street name.';
+                          },
+                          onSavedFn: (value) {
+                            controller.street = value;
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomTextFormField2(
+                          title: 'City',
+                          hintText: ' Alexandria',
+                          validatorFn: (value) {
+                            if (value!.isEmpty || value.length < 4)
+                              return 'Please enter valid city name.';
+                          },
+                          onSavedFn: (value) {
+                            controller.city = value;
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField2(
+                                title: 'State',
+                                hintText: 'Alexandria',
+                                validatorFn: (value) {
+                                  if (value!.isEmpty || value.length < 4)
+                                    return 'Please enter valid state name.';
+                                },
+                                onSavedFn: (value) {
+                                  controller.state = value;
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 36,
+                            ),
+                            Expanded(
+                              child: CustomTextFormField2(
+                                title: 'Country',
+                                hintText: 'Egypt',
+                                validatorFn: (value) {
+                                  if (value!.isEmpty || value.length < 4)
+                                    return 'Please enter valid city name.';
+                                },
+                                onSavedFn: (value) {
+                                  controller.country = value;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomTextFormField2(
+                          title: 'Phone Number',
+                          hintText: '+201017230938',
+                          keyboardType: TextInputType.phone,
+                          validatorFn: (value) {
+                            if (value!.isEmpty || value.length < 10)
+                              return 'Please enter valid number.';
+                          },
+                          onSavedFn: (value) {
+                            controller.phone = value;
+                          },
+                        ),
+                        SizedBox(
+                          height: 38,
+                        ),
+                        CustomButton(
+                          'SUBMIT',
+                              () async {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              await controller.addCheckoutToFireStore();
+                              Get.dialog(
+                                AlertDialog(
+                                  content: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle_outline_outlined,
+                                          color: primaryColor,
+                                          size: 200,
+                                        ),
+                                        CustomText2(
+                                          text: 'Order Submitted',
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor,
+                                          alignment: Alignment.center,
+                                        ),
+                                        SizedBox(
+                                          height: 40,
+                                        ),
+                                        CustomButton(
+                                          'Done',
+                                              () {
+                                            Get.back();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                barrierDismissible: false,
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
 
-  List<String> paymentMethods = [
-    'Credit Card',
-    'PayPal',
-    'Google Pay',
-    'Apple Pay',
-    'Bank Transfer',
-  ];
+class ListViewProducts extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<CartViewModel>(
+      builder: (controller) => Column(
+        children: [
+          Container(
+            height: 160,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.cartProductModel.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  width: 120,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.white,
+                        ),
+                        height: 120,
+                        width: 120,
+                        child: Image.network(
+                          controller.cartProductModel[index].image,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      CustomText2(
+                        text: controller.cartProductModel[index].name,
+                        fontSize: 14,
+                        maxLines: 1,
+                      ),
+                      CustomText(
+                        text:
+                        '\$${controller.cartProductModel[index].price} x ${controller.cartProductModel[index].quantity}',
+                        fontSize: 14,
+                        color: primaryColor,
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return SizedBox(
+                  width: 15,
+                );
+              },
+            ),
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomText(
+                text: 'TOTAL: ',
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+              CustomText2(
+                text: '\$${controller.totalPrice.toString()}',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: primaryColor,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

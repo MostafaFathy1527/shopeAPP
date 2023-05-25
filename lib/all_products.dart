@@ -27,7 +27,7 @@ class AllProducts extends StatelessWidget {
 
               return ListTile(
                 onTap: () {
-                  Get.to(DeatilasView(model: product));
+                  Get.to(ProductDetailView(controller.productModel[index]));
                 },
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(product.image),

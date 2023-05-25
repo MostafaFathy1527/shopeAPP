@@ -7,176 +7,187 @@
   import 'package:shope/constance.dart';
   import 'package:shope/core/view_model/cart_viewmodel.dart';
   import 'package:shope/model/cart_product_model.dart';
+import 'package:shope/view/widget/CustomButton.dart';
+import 'package:shope/view/widget/CustomText2.dart';
   import 'package:shope/view/widget/custom_text.dart';
   import '../core/view_model/control_view_model.dart';
   import 'checkout/checkout_view.dart';
 
   class CartView extends StatelessWidget {
-    final List<String> names = <String>[
-      'item1',
-      'item2',
-      'item3',
-      'item4',
-      'item5',
-    ];
-    final List<String> images = <String>[
-      'assets/images/google.png',
-      'assets/images/google.png',
-      'assets/images/google.png',
-      'assets/images/google.png',
-      'assets/images/google.png',
-    ];
-    final List<String> prices = <String>[
-      '\$1',
-      '\$1',
-      '\$1',
-      '\$1',
-      '\$1',
-    ];
 
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-        body: Column(
-          children: [
-            SizedBox(height: 50),
-            Expanded(
-              child: GetBuilder<CartViewModel>(
-                init: Get.put(CartViewModel())?..loadCartItems(),
-                builder: (controller) =>controller.isCartEmpty?
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+        body: GetBuilder<CartViewModel>(
+          builder: (controller) => controller.cartProductModel.isEmpty
+              ?
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
 
-                      children: [
-                        SvgPicture.asset('assets/images/undraw_empty_cart_co35.svg',width: 200,height: 200,),
-                        SizedBox(height: 20,),
-                        Text('Cart Empty ',style: TextStyle(fontSize: 36,fontWeight: FontWeight.bold),),
-                      ],
-                    )
-                    :Container(
-                 child: ListView.separated(
-                    itemBuilder:(context, index) {
-                      return Container(
-                        height: 140,
+              children: [
+                SvgPicture.asset('assets/images/undraw_empty_cart_co35.svg',width: 200,height: 200,),
+                SizedBox(height: 20,),
+                Text('Cart Empty ',style: TextStyle(fontSize: 36,fontWeight: FontWeight.bold),),
+              ],
+            ),
+          )
+              : Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding:
+                  EdgeInsets.only(top: 74, right: 16, left: 16),
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemBuilder: (context, index) {
+                      return Dismissible(
+                        key: Key(controller.cartProductModel[index].productid),
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.only(right: 33),
+                          child: Icon(
+                            Icons.delete_forever,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
+                        onDismissed: (direction) {
+                          if (direction == DismissDirection.endToStart) {
+                            controller.removeProduct(
+                                controller.cartProductModel[index]);
+                          }
+                        },
                         child: Row(
                           children: [
                             Image.network(
                               controller.cartProductModel[index].image,
-                              fit: BoxFit.fill,
-                              width: 70,
-                              height: 70,
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 30.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      controller.cartProductModel[index].name,
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomText(
+                                  text: controller.cartProductModel[index].name,
+                                  fontSize: 16,
+                                ),
+                                CustomText(
+                                  text:
+                                  '\$${controller.cartProductModel[index].price}',
+                                  fontSize: 16,
+                                  color: primaryColor,
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Container(
+                                  height: 30,
+                                  width: 95,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(4),
+                                    color: Colors.grey.shade300,
                                   ),
-                                  SizedBox(height: 10),
-                                  CustomText(
-                                    text: '\$${controller.cartProductModel[index].price.toString()}',
-                                  ),
-                                  SizedBox(height: 30),
-                                  Container(
-                                    width: 140,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.grey.shade200,
-                                    ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
-                                        GestureDetector(child: Icon(Icons.add),
-                                        onTap: (){
-                                          controller.increaseQuantity(controller.cartProductModel[index]);
+                                        GestureDetector(
+                                          child: Icon(
+                                            Icons.add,
+                                            size: 20,
+                                          ),
+                                          onTap: () {
+                                            controller.increaseQuantity(controller.cartProductModel[index]);
+
                                           },
                                         ),
-                                        SizedBox(height: 30),
                                         CustomText(
-                                          text: controller.cartProductModel[index].quantity.toString(),
+                                          text: controller
+                                              .cartProductModel[index]
+                                              .quantity
+                                              .toString(),
+                                          fontSize: 16,
                                           alignment: Alignment.center,
                                         ),
-                                        SizedBox(height: 30),
-                                        Container(
-                                          alignment: Alignment.topCenter,
-                                          child: GestureDetector(child: Icon(Icons.minimize)
-                                          ,onTap: (){
-                                              controller.decreaseQuantity(controller.cartProductModel[index]);
-                                          },
-                                        ),
+                                        GestureDetector(
+                                          child: Icon(
+                                            Icons.remove,
+                                            size: 20,
+                                          ),
+                                            onTap: (){
+                                controller.decreaseQuantity(controller.cartProductModel[index]);
+                                },
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       );
                     },
+                    separatorBuilder: (context, index) => SizedBox(
+                      height: 16,
+                    ),
                     itemCount: controller.cartProductModel.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(height: 40);
-                    },
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+              Material(
+                elevation: 12,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 30, vertical: 17),
+                  height: 84,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(height: 20),
-                      CustomText(text: 'TOTAL', fontSize: 22, color: Colors.grey),
-                      SizedBox(height: 5),
-                      GetBuilder<CartViewModel>(
-                        init: Get.find(),
-                          builder:(controller)=> CustomText(text: '\$ ${controller.totalPrice}', fontSize: 18, color: primaryColor)),
-
-                    ],
-                  ),
-                  GetBuilder<CartViewModel>(
-                    init: Get.find(),
-                    builder:(controller)=> Container(
-                      decoration: BoxDecoration(
-                        color: primaryColor,
-                      ),
-                      child: TextButton(
-                        onPressed: () {
-                          Get.to(CheckoutView(cartProducts: controller.cartProductModel));
-                        },
-                        child: CustomText(text: 'CHECKOUT', fontSize: 22, color: Colors.white),
-                        style: TextButton.styleFrom(
-                          backgroundColor: primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            text: 'TOTAL',
+                            fontSize: 12,
+                            color: Colors.grey,
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                          CustomText2(
+                            text: '\$${controller.totalPrice.toString()}',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: 50,
+                        width: 146,
+                        child: CustomButton(
+                          'CHECKOUT',
+                              () {
+                            Get.to(CheckoutView());
+                          },
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
-        bottomNavigationBar: bottomNavigationBar(),
+            ],
+          ),
+        ),        bottomNavigationBar: bottomNavigationBar(),
       );
     }
 

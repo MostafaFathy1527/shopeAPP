@@ -57,6 +57,24 @@ if (box.containsKey(cartProductModel.productid)) {
     print('you have to pay $_totalPrice');
     update();
   }
+  removeProduct(CartProductModel cartProductModel) async {
+    _loading.value = true;
+    final box = await CartDatabaseHelper.getBox();
+    await box.delete(cartProductModel.productid);
+    _cartProductModel.removeWhere((element) =>
+    element.productid == cartProductModel.productid);
+    _totalPrice -= double.parse(cartProductModel.price) * cartProductModel.quantity;
+    print('you have to pay $_totalPrice');
+    update();
+  }
+  removeAllProduct() async {
+    _loading.value = true;
+    final box = await CartDatabaseHelper.getBox();
+    await box.clear();
+    _cartProductModel.clear();
+    _totalPrice = 0.0;
+    update();
+  }
   increaseQuantity(CartProductModel cartProductModel) async {
     _loading.value = true;
     final box = await CartDatabaseHelper.getBox();
@@ -120,6 +138,7 @@ if (box.containsKey(cartProductModel.productid)) {
       _cartProductModel = loadedCartItems;
     }
   }
+
 
 
 

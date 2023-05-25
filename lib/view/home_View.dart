@@ -6,6 +6,7 @@ import 'package:shope/core/view_model/home_view_model.dart';
 import 'package:shope/view/cart_view.dart';
 import 'package:shope/view/deatilas_view.dart';
 import 'package:shope/view/widget/custom_text.dart';
+import 'package:shope/view/widget/search_view.dart';
 
 import '../all_products.dart';
 import '../core/view_model/auth_view_model.dart';
@@ -126,7 +127,11 @@ class HomeView extends StatelessWidget {
           ),
           hintText: "Search",
         ),
+        onFieldSubmitted: (value) {
+          Get.to(SearchView(value));
+        },
       ),
+
     );
   }
 
@@ -143,7 +148,7 @@ class HomeView extends StatelessWidget {
 
             return GestureDetector(
               onTap: () {
-                Get.to(DeatilasView(model: product));
+                Get.to(ProductDetailView(controller.productModel[index]));
               },
               child: Container(
                 width: 200,
