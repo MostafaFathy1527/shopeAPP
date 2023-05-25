@@ -1,4 +1,5 @@
   import 'package:path/path.dart';
+import 'package:shope/model/productmodel.dart';
   import 'package:sqflite/sqflite.dart';
   import 'package:hive/hive.dart';
   import '../../../constance.dart';

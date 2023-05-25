@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,10 +7,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shope/core/view_model/control_view_model.dart';
 import 'package:shope/view/auth/login_screen.dart';
+import 'package:shope/view/controlview.dart';
 
+import '../../constance.dart';
+import '../../helper/local_storage_data.dart';
 import '../../model/user_model.dart';
-import '../../service/firestore_user.dart';
 import '../../view/home_View.dart';
+import '../services/firestore_user.dart';
 
 class AuthViewModel extends GetxController {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
@@ -21,18 +26,20 @@ class AuthViewModel extends GetxController {
   Rx<User?> _user = Rx<User?>(null);
 
   String? get user => _user.value?.email;
+  final LocalStorageDate localStorageDate = Get.find();
 
   @override
   void onInit() {
     super.onInit();
     _user.bindStream(_auth.authStateChanges());
-    _loadBottom();
+    if (_auth.currentUser != null) {
+      getCurrentUserDate(_auth.currentUser!.uid);
+    }
   }
 
   @override
   void onClose() {
     super.onClose();
-    _loadBottom();
   }
 
   void signInWithGoogle() async {
@@ -55,12 +62,13 @@ class AuthViewModel extends GetxController {
 
       // Set the name to be the same as the email address.
       final User? user = _auth.currentUser;
-      final displayName = email?.split('@')[0]; // Extract the username part of the email.
+      final displayName = email?.split(
+          '@')[0]; // Extract the username part of the email.
 
       // Update the user's display name.
       await user!.updateDisplayName(displayName);
 
-      Get.offAll(() => HomeView());
+      Get.offAll(() => ControlView());
     } catch (e) {
       print(e.toString());
       Get.snackbar(
@@ -72,17 +80,6 @@ class AuthViewModel extends GetxController {
     }
   }
 
-  void _loadBottom() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? _seen = prefs.getBool('seen') ?? false;
-
-    if (_seen) {
-      Get.offAll(() => HomeView());
-    } else {
-      await prefs.setBool('seen', true);
-      Get.offAll(() => LoginScreen());
-    }
-  }
 
   void signInWithEmailAndPassword() async {
     if (email == null || password == null) {
@@ -109,8 +106,11 @@ class AuthViewModel extends GetxController {
       await _auth.signInWithEmailAndPassword(
         email: email!,
         password: password!,
-      );
-      Get.offAll(() => HomeView());
+      ).then((value) async {
+        getCurrentUserDate(value.user!.uid);
+      });
+
+      Get.offAll(() => ControlView());
     } catch (e) {
       print(e.toString());
       Get.snackbar(
@@ -134,7 +134,7 @@ class AuthViewModel extends GetxController {
         password: password!,
       );
       await saveUser(userCredential);
-      Get.offAll(() => HomeView());
+      Get.offAll(() => ControlView());
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -160,11 +160,26 @@ class AuthViewModel extends GetxController {
   }
 
   Future<void> saveUser(UserCredential user) async {
-    await FireStoreUser().addUserToFireStore(UserModel(
-      userId: user.user?.uid,
-      email: user.user?.email,
-      name: name == null ? user.user?.displayName : name,
+    UserModel userModel = UserModel(
+      userId: user.user!.uid,
+      email: user.user!.email,
+      name: name == null ? user.user!.email!.split('@')[0] : name,
       pic: '',
-    ));
+    );
+    await FireStoreUser().addUserToFireStore(userModel);
+    setUser(userModel);
   }
+
+  void setUser(UserModel userModel) async {
+    await localStorageDate.setUser(userModel);
+  }
+
+  void getCurrentUserDate(String uid) async {
+    {
+      await FireStoreUser().getCurrentUser(uid).then((value) {
+        setUser(UserModel.fromJson(value.data() as Map?));
+      });
+    }
+  }
+
 }

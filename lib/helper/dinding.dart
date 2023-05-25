@@ -1,5 +1,6 @@
 
 import 'package:get/get.dart';
+import 'package:shope/helper/local_storage_data.dart';
 import '../core/view_model/auth_view_model.dart';
 import 'package:shope/core/view_model/cart_viewmodel.dart';
 import '../core/view_model/control_view_model.dart';
@@ -13,6 +14,7 @@ class Binding extends Bindings {
     Get.lazyPut(() => ControlViewModel());
     Get.lazyPut(() => HomeViewModel());
     Get.lazyPut(() => CartViewModel());
+    Get.lazyPut(() => LocalStorageDate());
 
   }
 }

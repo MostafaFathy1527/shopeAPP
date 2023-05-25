@@ -38,7 +38,7 @@ dependencies:
   google_sign_in: ^6.1.0
   google_sign_in_web: ^0.12.0
   flutter_facebook_auth: ^3.5.0
-  shared_preferences: ^2.0.8
+  shared_preferences: ^2.1.1
   cloud_firestore: ^4.7.1
   sqflite: ^2.2.8+4
   path: ^1.8.3
@@ -47,6 +47,8 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.0
   path_provider: ^2.0.2
+  flutter_svg: ^2.0.6
+  status_change: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -68,3 +70,4 @@ flutter:
   assets:
     - assets/images/google.png
     - assets/images/watch.png
+    - assets/images/undraw_empty_cart_co35.svg

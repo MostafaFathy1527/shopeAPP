@@ -15,7 +15,7 @@ import 'helper/dinding.dart';
 
 void main() async {
   await Hive.initFlutter();
-
+  Get.put(CartViewModel());
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb)
     await Firebase.initializeApp(
@@ -36,8 +36,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final controlViewModel = Get.put(ControlViewModel());
   final homeViewModel = Get.put(HomeViewModel()); // Update this line
-  final CartViewModel cartViewModel = Get.put(CartViewModel()); // Update this line
-
+  final cartViewModel = Get.put(CartViewModel());
    MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {

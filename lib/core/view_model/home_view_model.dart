@@ -60,8 +60,7 @@ void onInit(){
         _productModel.add(ProductModel.fromJson(
             value[i].data() as Map<String, dynamic>
         ));
-        print("productsssssssssss") ;
-        print(_productModel[i].name);
+
         update();
         _loading.value = false;
       }
