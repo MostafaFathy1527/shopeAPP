@@ -16,170 +16,114 @@ import '../../view/home_View.dart';
 import '../services/firestore_user.dart';
 
 class AuthViewModel extends GetxController {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? email, password, name;
 
-  String? email;
-  String? password;
-  String? name;
+  Rxn<User>? _user = Rxn<User>();
 
-  Rx<User?> _user = Rx<User?>(null);
+  String? get user => _user?.value?.email;
 
-  String? get user => _user.value?.email;
-  final LocalStorageDate localStorageDate = Get.find();
+  final _auth = FirebaseAuth.instance;
 
   @override
   void onInit() {
     super.onInit();
-    _user.bindStream(_auth.authStateChanges());
-    if (_auth.currentUser != null) {
-      getCurrentUserDate(_auth.currentUser!.uid);
-    }
+    _user!.bindStream(_auth.authStateChanges());
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void signInWithGoogle() async {
+  void signUpWithEmailAndPassword() async {
     try {
-      final GoogleSignInAccount? googleSignInAccount =
-      await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount!.authentication;
-      final AuthCredential authCredential = GoogleAuthProvider.credential(
-        idToken: googleSignInAuthentication.idToken,
-        accessToken: googleSignInAuthentication.accessToken,
-      );
-
-      // Sign in to Firebase with the Google credential.
-      final UserCredential userCredential =
-      await _auth.signInWithCredential(authCredential);
-
-      // Get the user's email address.
-      final String? email = userCredential.user!.email;
-
-      // Set the name to be the same as the email address.
-      final User? user = _auth.currentUser;
-      final displayName = email?.split(
-          '@')[0]; // Extract the username part of the email.
-
-      // Update the user's display name.
-      await user!.updateDisplayName(displayName);
-
-      Get.offAll(() => ControlView());
-    } catch (e) {
-      print(e.toString());
+      await _auth
+          .createUserWithEmailAndPassword(email: email!, password: password!)
+          .then((user) {
+        saveUser(user);
+      });
+      Get.offAll(ControlView());
+    } catch (error) {
+      String errorMessage =
+      error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
-        'Error login account',
-        e.toString(),
-        colorText: Colors.black,
+        'Failed to login..',
+        errorMessage,
         snackPosition: SnackPosition.BOTTOM,
       );
     }
   }
-
 
   void signInWithEmailAndPassword() async {
-    if (email == null || password == null) {
-      Get.snackbar(
-        'Error login account',
-        'Please enter email and password',
-        colorText: Colors.black,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
-    if (email!.isEmpty || password!.isEmpty) {
-      Get.snackbar(
-        'Error login account',
-        'Please enter email and password',
-        colorText: Colors.black,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: email!,
-        password: password!,
-      ).then((value) async {
-        getCurrentUserDate(value.user!.uid);
+      await _auth
+          .signInWithEmailAndPassword(email: email!, password: password!)
+          .then((user) {
+        FireStoreUser().getUserFromFirestore(user.user!.uid).then((doc) {
+          saveUserLocal(
+              UserModel.fromJson(doc.data() as Map<dynamic, dynamic>));
+        });
       });
-
-      Get.offAll(() => ControlView());
-    } catch (e) {
-      print(e.toString());
+      Get.offAll(ControlView());
+    } catch (error) {
+      String errorMessage =
+      error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
-        'Error login account',
-        e.toString(),
-        colorText: Colors.black,
+        'Failed to login..',
+        errorMessage,
         snackPosition: SnackPosition.BOTTOM,
       );
     }
   }
 
-  Future<User?> createAccountWithEmailAndPassword() async {
-    if (email == null || password == null) {
-      throw Exception('Email or password is null');
-    }
-
+  void signInWithGoogleAccount() async {
     try {
-      final UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(
-        email: email!,
-        password: password!,
+      GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+      final GoogleSignInAccount? _googleUser = await _googleSignIn.signIn();
+
+      GoogleSignInAuthentication _googleSignInAuthentication =
+      await _googleUser!.authentication;
+      final _googleAuthCredential = GoogleAuthProvider.credential(
+        idToken: _googleSignInAuthentication.idToken,
+        accessToken: _googleSignInAuthentication.accessToken,
       );
-      await saveUser(userCredential);
-      Get.offAll(() => ControlView());
-      return userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e);
+
+      await _auth.signInWithCredential(_googleAuthCredential).then((user) {
+        saveUser(user);
+      });
+      Get.offAll(ControlView());
+    } catch (error) {
+      String errorMessage =
+      error.toString().substring(error.toString().indexOf(' ') + 1);
+      Get.snackbar(
+        'Failed to login..',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
+
 
   void signOut() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.clear();
-      await _googleSignIn.signOut();
       await _auth.signOut();
-      Get.to(() => LoginScreen(), preventDuplicates: true);
-    } catch (e) {
-      print(e);
+      
+      Get.offAll(LoginScreen());
+      LocalStorageDate.clearUserData();
+    } catch (error) {
+      print(error);
     }
   }
 
-  Future<void> saveUser(UserCredential user) async {
-    UserModel userModel = UserModel(
-      userId: user.user!.uid,
-      email: user.user!.email,
-      name: name == null ? user.user!.email!.split('@')[0] : name,
-      pic: '',
+  void saveUser(UserCredential userCredential) async {
+    UserModel _userModel = UserModel(
+      userId: userCredential.user!.uid,
+      email: userCredential.user!.email!,
+      name: name == null ? userCredential.user!.displayName! : this.name!,
+      pic: userCredential.user!.photoURL == null
+          ? 'default'
+          : userCredential.user!.photoURL! + "?width=400",
     );
-    await FireStoreUser().addUserToFireStore(userModel);
-    setUser(userModel);
+    FireStoreUser().addUserToFirestore(_userModel);
+    saveUserLocal(_userModel);
   }
 
-  void setUser(UserModel userModel) async {
-    await localStorageDate.setUser(userModel);
+  void saveUserLocal(UserModel userModel) async {
+    LocalStorageDate.setUserData(userModel);
   }
-
-  void getCurrentUserDate(String uid) async {
-    {
-      await FireStoreUser().getCurrentUser(uid).then((value) {
-        setUser(UserModel.fromJson(value.data() as Map?));
-      });
-    }
-  }
-
 }

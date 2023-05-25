@@ -5,7 +5,7 @@ import '../../model/checkout_model.dart';
 
 class FirestoreCheckout {
   final CollectionReference _ordersCollection = FirebaseFirestore.instance
-      .collection('users')
+      .collection('Users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection('orders');
 

@@ -3,16 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../model/user_model.dart';
 
 class FireStoreUser{
-  final CollectionReference _userCollection =
-      FirebaseFirestore.instance.collection('Users');
+  final CollectionReference _usersCollection =
+  FirebaseFirestore.instance.collection('Users');
 
-  Future<void> addUserToFireStore(UserModel userModel) async {
-    return await _userCollection
-        .doc(userModel.userId)
-        .set(userModel.toJson());
+  addUserToFirestore(UserModel userModel) async {
+    await _usersCollection.doc(userModel.userId).set(userModel.toJson());
   }
 
-  Future<DocumentSnapshot> getCurrentUser(String uid) async {
-    return await _userCollection.doc(uid).get();
+  Future<DocumentSnapshot> getUserFromFirestore(String uid) async {
+    return await _usersCollection.doc(uid).get();
   }
 }

@@ -126,7 +126,7 @@ class RegisterView extends GetWidget<AuthViewModel> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       print(_authViewModel.email);
-                      _authViewModel.createAccountWithEmailAndPassword();
+                      _authViewModel.signUpWithEmailAndPassword();
                     }
                     },
                   child: Row(

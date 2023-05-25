@@ -162,7 +162,7 @@ class LoginScreen extends GetWidget<AuthViewModel> {
                 ),
                 child: TextButton(
                   onPressed: (){
-                    controller.signInWithGoogle();
+                    controller.signInWithGoogleAccount();
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
