@@ -7,200 +7,178 @@ import 'package:shope/view/widget/custom_text_form_field.dart';
 import '../../constance.dart';
 import '../../core/view_model/auth_view_model.dart';
 import '../../core/view_model/control_view_model.dart';
+import '../widget/CustomButton.dart';
+import '../widget/CustomText2.dart';
+import '../widget/custom_textFormField2.dart';
 
 
 class LoginScreen extends GetWidget<AuthViewModel> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          right: 20,
-          left: 20,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText(
-                    text: "Welcome,",
-                    fontSize: 30,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(RegisterView());
-                    },
-                    child: CustomText(
-                      text: "Sign Up",
-                      color: primaryColor,
-                      fontSize: 18,
+    return OrientationBuilder(
+      builder: (context, orientation) => Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                right: 16, left: 16, top: 126, bottom: 42),
+            child: Column(
+              children: [
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText2(
+                                text: 'Welcome,',
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Get.to(RegisterView());
+                                },
+                                child: CustomText(
+                                  text: 'Sign Up',
+                                  fontSize: 18,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          CustomText(
+                            text: 'Sign in to Continue',
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            height: 48,
+                          ),
+                          CustomTextFormField2(
+                            title: 'Email',
+                            hintText: 'mostafafathy1503@gmail.com',
+                            keyboardType: TextInputType.emailAddress,
+                            validatorFn: (value) {
+                              if (value!.isEmpty)
+                                return 'Email invalid or not found';
+                            },
+                            onSavedFn: (value) {
+                              controller.email = value;
+                            },
+                          ),
+                          SizedBox(
+                            height: 38,
+                          ),
+                          CustomTextFormField2(
+                            title: 'Password',
+                            hintText: '***********',
+                            obscureText: true,
+                            validatorFn: (value) {
+                              if (value!.isEmpty)
+                                return 'Password is incorrect';
+                            },
+                            onSavedFn: (value) {
+                              controller.password = value;
+                            },
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          CustomText(
+                            text: 'Forgot Password?',
+                            fontSize: 14,
+                            alignment: Alignment.centerRight,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          CustomButton(
+                            'SIGN IN',
+                                () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                controller.signInWithEmailAndPassword();
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              CustomText(
-                text: 'Sign in to Continue',
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-
-              CustomTextFormField(
-                onSaved: (value) {
-                  controller.email = value!;
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return "Please enter your email";
-                  }
-                  return null;
-                },
-                labelText: "Email",
-                hintText: "Enter your email",
-                labelColor: Colors.grey,
-                hintColor: primaryColor,
-                borderColor: primaryColor,
-              ),
-
-              SizedBox(
-                height: 15,
-              ),
-
-              CustomTextFormField(
-                obscureText: true,
-                onSaved: (value) {
-                  controller.password = value!;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter your email";
-                  }
-                  return null;
-                },
-
-                labelText: "Password",
-                hintText: '**********',
-                labelColor: Colors.grey,
-                hintColor: primaryColor,
-                borderColor: primaryColor,
-              ),
-
-              SizedBox(
-                height: 10,
-              ),
-              CustomText(
-                text: 'Forgot Password?',
-                fontSize: 14,
-                alignment: Alignment.topRight,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-          TextButton(
-            onPressed: (){
-              _formKey.currentState!.save();
-              if(_formKey.currentState!.validate()){
-                controller.signInWithEmailAndPassword();
-              }
-            },
-            child: CustomText(
-              text: "SIGN IN",
-              fontSize: 18.0,
-              color: Colors.white,
-              alignment: Alignment.center,
-            ),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(primaryColor),
-              padding: MaterialStateProperty.all(
-                EdgeInsets.symmetric(horizontal: 140, vertical: 12),
-              ),
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
                 ),
-              ),
-            ),
-          ),
-
-              SizedBox(
-                height: 10,
-              ),
-              CustomText(
-                text: '-OR-',
-                alignment: Alignment.center,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: (MediaQuery.of(context).size.width)*0.6,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.0),
-                  border: Border.all(
-                    color: primaryColor,
-                    width: 3.0,
-
-                  ),
+                SizedBox(
+                  height: 28,
                 ),
-                child: TextButton(
-                  onPressed: (){
+                CustomText(
+                  text: '-OR-',
+                  fontSize: 18,
+                  alignment: Alignment.center,
+                ),
+                SizedBox(
+                  height: 43,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomButtonSocial(
+                  title: 'Sign In with Google',
+                  image: 'google',
+                  onPressedFn: () {
                     controller.signInWithGoogleAccount();
                   },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children:[
-                      Image.asset(
-                        "assets/images/google.png",
-                        width: 30.0,
-                        height: 30.0,
-                      ),
-
-                      const SizedBox(
-                        width: 10.0,
-                      ),
-                      CustomText(
-                        text: "Sign In with Google",
-                        fontSize: 18.0,
-                        color: primaryColor,
-                        alignment: Alignment.center,
-                      ),
-                      _loadbottom(),
-
-                    ],
-                  ),
                 ),
-              ),
-          ],
-
+              ],
+            ),
           ),
         ),
-
       ),
-
     );
   }
-  Widget _loadbottom(){
-    return GetBuilder<ControlViewModel>(
-        init: ControlViewModel(),
-    builder: (controller) => Text(""),
+}
+
+class CustomButtonSocial extends StatelessWidget {
+  final VoidCallback onPressedFn;
+  final String image;
+  final String title;
+
+  const CustomButtonSocial({
+    required this.onPressedFn,
+    required this.image,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onPressedFn,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 30),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset(
+              'assets/images/google.png',
+              fit: BoxFit.cover,
+              height: 20,
+              width: 20,
+            ),
+            CustomText(
+              text: title,
+              fontSize: 14,
+            ),
+            Container(width: 20),
+          ],
+        ),
+      ),
     );
   }
 }
