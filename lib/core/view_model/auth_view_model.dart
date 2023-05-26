@@ -14,6 +14,7 @@ import '../../helper/local_storage_data.dart';
 import '../../model/user_model.dart';
 import '../../view/home_View.dart';
 import '../services/firestore_user.dart';
+import 'package:http/http.dart' as http;
 
 class AuthViewModel extends GetxController {
   String? email, password, name;
@@ -30,69 +31,81 @@ class AuthViewModel extends GetxController {
     _user!.bindStream(_auth.authStateChanges());
   }
 
+
   void signUpWithEmailAndPassword() async {
     try {
-      await _auth
-          .createUserWithEmailAndPassword(email: email!, password: password!)
-          .then((user) {
-        saveUser(user);
-      });
-      Get.offAll(ControlView());
+      final url = 'https://us-central1-shope-2c566.cloudfunctions.net/signup'; // Replace with the actual Cloud Function URL
+      final response = await http.post(
+        Uri.parse(url),
+        body: {'email': email, 'password': password},
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        saveUserLocal(UserModel(userId: data['userId'], email: email, name: name, pic: 'default'));
+
+        Get.offAll(ControlView());
+      } else {
+        final errorMessage = json.decode(response.body)['message'];
+        Get.snackbar(
+          'Failed to signup..',
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } catch (error) {
-      String errorMessage =
-      error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
-        'Failed to login..',
-        errorMessage,
+        'Failed to signup..',
+        error.toString(),
         snackPosition: SnackPosition.BOTTOM,
       );
     }
-  }
+}
 
   void signInWithEmailAndPassword() async {
     try {
-      await _auth
-          .signInWithEmailAndPassword(email: email!, password: password!)
-          .then((user) {
-        FireStoreUser().getUserFromFirestore(user.user!.uid).then((doc) {
-          saveUserLocal(
-              UserModel.fromJson(doc.data() as Map<dynamic, dynamic>));
-        });
-      });
-      Get.offAll(ControlView());
+      final url = 'https://us-central1-shope-2c566.cloudfunctions.net/login'; // Replace with the actual Cloud Function URL
+      final response = await http.post(
+        Uri.parse(url),
+        body: {'email': email, 'password': password},
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        saveUserLocal(UserModel(userId: data['userId'], email: email, name: name, pic: 'default'));
+        Get.offAll(ControlView());
+      } else {
+        final errorMessage = json.decode(response.body)['message'];
+        Get.snackbar(
+          'Failed to login..',
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } catch (error) {
-      String errorMessage =
-      error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
         'Failed to login..',
-        errorMessage,
+        error.toString(),
         snackPosition: SnackPosition.BOTTOM,
       );
     }
   }
 
-  void signInWithGoogleAccount() async {
+  void signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication googleAuth =
+    await googleUser!.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
     try {
-      GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-      final GoogleSignInAccount? _googleUser = await _googleSignIn.signIn();
-
-      GoogleSignInAuthentication _googleSignInAuthentication =
-      await _googleUser!.authentication;
-      final _googleAuthCredential = GoogleAuthProvider.credential(
-        idToken: _googleSignInAuthentication.idToken,
-        accessToken: _googleSignInAuthentication.accessToken,
-      );
-
-      await _auth.signInWithCredential(_googleAuthCredential).then((user) {
-        saveUser(user);
-      });
+      final UserCredential userCredential =
+      await _auth.signInWithCredential(credential);
+      saveUser(userCredential);
       Get.offAll(ControlView());
     } catch (error) {
-      String errorMessage =
-      error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
         'Failed to login..',
-        errorMessage,
+        error.toString(),
         snackPosition: SnackPosition.BOTTOM,
       );
     }

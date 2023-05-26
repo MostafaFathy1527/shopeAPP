@@ -1,5 +1,11 @@
 {
   "projects": {
     "default": "shope-2c566"
+  },
+  "targets": {},
+  "etags": {
+    "shope-2c566": {
+      "extensionInstances": {}
+    }
   }
 }
