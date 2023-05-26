@@ -133,7 +133,7 @@ class LoginScreen extends GetWidget<AuthViewModel> {
                   title: 'Sign In with Google',
                   image: 'google',
                   onPressedFn: () {
-                    controller.signInWithGoogleAccount();
+                    controller.signInWithGoogle();
                   },
                 ),
               ],

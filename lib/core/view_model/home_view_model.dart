@@ -22,16 +22,16 @@ class HomeViewModel extends GetxController{
 
 
 
-HomeViewModel(){
-  getCategory();
-  getBestSelling();
-}
+  HomeViewModel(){
+    getCategory();
+    getBestSelling();
+  }
 
-@override
-void onInit(){
-  super.onInit();
-  init: ControlViewModel();
-}
+  @override
+  void onInit(){
+    super.onInit();
+    init: ControlViewModel();
+  }
   @override
   void onClose(){
     super.onClose();
@@ -39,8 +39,8 @@ void onInit(){
   }
 
   getCategory() async {
-  _loading.value = true;
-  HomeService().getCategory().then((value) {
+    _loading.value = true;
+    HomeService().getCategory().then((value) {
       for (int i = 0; i < value.length; i++) {
         _categoryModel.add(CategoryModel.fromJson(
             value[i].data() as Map<String, dynamic>
@@ -50,7 +50,7 @@ void onInit(){
 
       }
 
-     });
+    });
 
   }
   getBestSelling() async{

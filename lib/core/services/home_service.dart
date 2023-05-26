@@ -1,19 +1,24 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 
 class HomeService {
-  final CollectionReference _categoryCollectionRef =
-  FirebaseFirestore.instance.collection('Catagories');
 
-  final CollectionReference _productsCollectionRef =
-  FirebaseFirestore.instance.collection('Products');
-
-
-  Future<List<QueryDocumentSnapshot>> getCategory() async {
-    var value = await _categoryCollectionRef.get();
-    return value.docs;
+  Future<List<dynamic>> getCategory() async {
+    final response = await http.get(Uri.parse('https://us-central1-shope-2c566.cloudfunctions.net/getCategories'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load categories');
+    }
   }
-  Future<List<QueryDocumentSnapshot>> getBestSelling() async {
-    var value = await _productsCollectionRef.get();
-    return value.docs;
+
+  Future<List<dynamic>> getBestSelling() async {
+    final response = await http.get(Uri.parse('https://us-central1-shope-2c566.cloudfunctions.net/getBestSellingProducts'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load best-selling products');
+    }
   }
 }
