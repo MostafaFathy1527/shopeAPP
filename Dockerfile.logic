@@ -1,0 +1,14 @@
+# Use an official Flutter runtime as the base image
+FROM cirrusci/flutter
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the pubspec.yaml and pubspec.lock files to the container
+COPY pubspec.* ./
+
+# Get dependencies
+RUN flutter pub get
+
+# Copy the entire project to the container
+COPY . .

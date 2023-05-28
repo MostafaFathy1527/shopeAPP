@@ -1,17 +1,14 @@
-version: "3.8"
-
+version: '3'
 services:
-  frontend:
+  view-container:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.view
     ports:
-      - 8080:8080
-    depends_on:
-      - backend
+      - 80:80
+    restart: always
 
-  backend:
+  logic-container:
     build:
-      context: backend
-    ports:
-      - 8000:8000
+      context: .
+      dockerfile: Dockerfile.logic
