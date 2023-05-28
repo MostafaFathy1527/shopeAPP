@@ -1,14 +1,17 @@
-# Use an official Flutter runtime as the base image
-FROM cirrusci/flutter
+FROM cirrusci/flutter:latest
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the pubspec.yaml and pubspec.lock files to the container
-COPY pubspec.* ./
+# Create a non-root user
+RUN adduser --disabled-password --gecos '' nonroot
+USER nonroot
 
-# Get dependencies
+# Copy the pubspec files and install dependencies
+COPY pubspec.* ./
 RUN flutter pub get
 
-# Copy the entire project to the container
+# Copy the remaining app files
 COPY . .
+
+# Build the Flutter app
+RUN flutter build apk
