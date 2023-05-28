@@ -1,0 +1,15 @@
+FROM python:3.9
+
+RUN apt-get update && apt-get install -y curl
+
+RUN curl -sSL https://get.docker.com/ | sh
+
+RUN docker network create mynetwork
+
+WORKDIR /app
+
+COPY . /app
+
+EXPOSE 8080
+
+CMD [ "python", "app.py" ]
