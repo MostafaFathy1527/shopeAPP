@@ -37,16 +37,10 @@ class AuthViewModel extends GetxController {
           .then((user) {
         saveUser(user);
       });
-<<<<<<< Updated upstream
       Get.offAll(ControlView());
     } catch (error) {
       String errorMessage =
       error.toString().substring(error.toString().indexOf(' ') + 1);
-=======
-      Get.offAll(HomeView());
-    } catch (error) {
-      String errorMessage =
-          error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
         'Failed to login..',
         errorMessage,
@@ -55,30 +49,6 @@ class AuthViewModel extends GetxController {
     }
   }
 
-  void signInWithEmailAndPassword() async {
-    try {
-      await _auth
-          .signInWithEmailAndPassword(email: email!, password: password!)
-          .then((user) {
-        FireStoreUser().getUserFromFirestore(user.user!.uid).then((doc) {
-          saveUserLocal(
-              UserModel.fromJson(doc.data() as Map<dynamic, dynamic>));
-        });
-      });
-      Get.offAll(HomeView());
-    } catch (error) {
-      String errorMessage =
-          error.toString().substring(error.toString().indexOf(' ') + 1);
->>>>>>> Stashed changes
-      Get.snackbar(
-        'Failed to login..',
-        errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
-  }
-
-<<<<<<< Updated upstream
   void signInWithEmailAndPassword() async {
     try {
       await _auth
@@ -123,34 +93,11 @@ class AuthViewModel extends GetxController {
       Get.snackbar(
         'Failed to login..',
         errorMessage,
-=======
-  void signInWithGoogleAccount() async {
-    try {
-      GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-      final GoogleSignInAccount? _googleUser = await _googleSignIn.signIn();
-
-      GoogleSignInAuthentication _googleSignInAuthentication =
-          await _googleUser!.authentication;
-      final _googleAuthCredential = GoogleAuthProvider.credential(
-        idToken: _googleSignInAuthentication.idToken,
-        accessToken: _googleSignInAuthentication.accessToken,
-      );
-
-      await _auth.signInWithCredential(_googleAuthCredential).then((user) {
-        saveUser(user);
-      });
-      Get.offAll(HomeView());
-    } catch (error) {
-      String errorMessage =
-          error.toString().substring(error.toString().indexOf(' ') + 1);
-      Get.snackbar(
-        'Failed to login..',
-        errorMessage,
->>>>>>> Stashed changes
         snackPosition: SnackPosition.BOTTOM,
       );
     }
   }
+
 
   void signOut() async {
     try {
