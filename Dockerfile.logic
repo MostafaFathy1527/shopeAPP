@@ -8,7 +8,6 @@ USER nonroot
 
 # Copy the pubspec files and install dependencies
 COPY pubspec.* ./
-RUN flutter pub get
 
 # Copy the remaining app files
 COPY . .
