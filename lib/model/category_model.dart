@@ -4,12 +4,13 @@ class CategoryModel {
 
   CategoryModel( this.name,  this.image);
 
-  CategoryModel.fromJson(Map<String, dynamic> json)
+  CategoryModel.fromJson(Map<dynamic, dynamic> json)
       : name = json['name'],
         image = json['image'];
 
-  Map<String, dynamic> toJson() => {
+  Map<dynamic, dynamic> toJson() => {
     'name': name,
     'image': image,
   };
+
 }

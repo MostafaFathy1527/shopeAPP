@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
+
 class SelectImageViewModel extends GetxController {
   File? imageFile;
   String? picUrl;
@@ -36,6 +37,4 @@ class SelectImageViewModel extends GetxController {
     UploadTask _uploadTask = _firebaseStorageRef.putFile(imageFile!);
     picUrl = await (await _uploadTask).ref.getDownloadURL();
   }
-
-
 }

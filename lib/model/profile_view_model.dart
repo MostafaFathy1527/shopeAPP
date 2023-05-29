@@ -8,6 +8,7 @@ import 'package:shope/model/user_model.dart';
 
 import '../core/services/firestore_user.dart';
 
+
 class ProfileViewModel extends GetxController {
   UserModel? _currentUser;
   String? name, email, password, picUrl;
@@ -56,5 +57,4 @@ class ProfileViewModel extends GetxController {
     }
   }
 }
-
 
