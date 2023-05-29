@@ -25,6 +25,7 @@ app.post('/signup', async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
+
     // Perform signup logic using Firebase Authentication
     const userRecord = await admin.auth().createUser({
       email,
